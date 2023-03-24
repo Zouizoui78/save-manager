@@ -30,11 +30,34 @@ endif()
 # Otherwise, you can set OUTPUT_FOLDER to any place you'd like :)
 # set(OUTPUT_FOLDER "C:/path/to/any/folder")
 
+set(
+    SRC
+    src/plugin.cpp
+    src/Conf.cpp
+    src/savetools.cpp
+    src/wintools.cpp
+)
+
 # Setup your SKSE plugin as an SKSE plugin!
 find_package(CommonLibSSE CONFIG REQUIRED)
-add_commonlibsse_plugin(${PROJECT_NAME} SOURCES plugin.cpp) # <--- specifies plugin.cpp
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+
+add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${SRC}) # <--- specifies plugin.cpp
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23) # <--- use C++23 standard
 target_precompile_headers(${PROJECT_NAME} PRIVATE PCH.h) # <--- PCH.h is required!
+
+target_include_directories(
+    ${PROJECT_NAME}
+    PRIVATE src
+)
+
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE nlohmann_json::nlohmann_json
+    PRIVATE spdlog::spdlog
+    PRIVATE Shlwapi
+)
 
 # When your SKSE .dll is compiled, this will automatically copy the .dll into your mods folder.
 # Only works if you configure DEPLOY_ROOT above (or set the SKYRIM_MODS_FOLDER environment variable)

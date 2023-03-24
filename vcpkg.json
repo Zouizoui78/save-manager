@@ -3,6 +3,8 @@
     "name": "save-manager",
     "version-string": "0.0.1",
     "dependencies": [
-        "commonlibsse-ng"
+        "commonlibsse-ng",
+        "nlohmann-json",
+        "spdlog"
     ]
 }

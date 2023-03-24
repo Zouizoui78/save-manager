@@ -31,6 +31,18 @@ void message_handler(SKSE::MessagingInterface::Message *message) {
 SKSEPluginLoad(const SKSE::LoadInterface *skse) {
     SKSE::Init(skse);
     setup_log();
+
+    const Conf& conf = Conf::get_singleton();
+    if (!fs::exists(conf.saves_path)) {
+        SPDLOG_ERROR("Save path '{}' does not exist, will do nothing", conf.saves_path);
+        return true;
+    }
+
+    fs::path archive_directory = fs::path(conf.archive_path).parent_path();
+    if (!fs::exists(conf.archive_path)) {
+        fs::create_directories(conf.archive_path);
+    }
+
     SKSE::GetMessagingInterface()->RegisterListener(message_handler);
     return true;
 }

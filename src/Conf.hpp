@@ -14,7 +14,7 @@ class Conf final {
     std::string saves_path { "" };
     std::string archive_path { "" };
     bool compress { false };
-    uint16_t n_saves_to_keep { 10 };
+    uint32_t n_saves_to_keep { 10 };
     uint32_t max_saves_in_archive { 1000 };
 
     // API

@@ -6,7 +6,7 @@
 std::vector<std::filesystem::path> list_saves(bool sort = true);
 std::vector<std::filesystem::path> list_saves_to_remove();
 
-uint64_t get_save_number(std::filesystem::path save_path);
+uint32_t get_save_number(std::filesystem::path save_path);
 
 void manage_saves();
 void compress_saves(const std::vector<std::filesystem::path>& files_to_compress);

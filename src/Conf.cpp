@@ -45,7 +45,7 @@ void Conf::load(Conf& singleton) {
     }
 
     if (j.contains("n_saves_to_keep")) {
-        singleton.n_saves_to_keep = j.at("n_saves_to_keep").get<uint16_t>();
+        singleton.n_saves_to_keep = j.at("n_saves_to_keep").get<uint32_t>();
     }
 
     if (j.contains("max_saves_in_archive")) {

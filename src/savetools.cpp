@@ -4,12 +4,28 @@
 
 namespace fs = std::filesystem;
 
+void management_finished_callback(uint64_t n_removed_files) {
+    uint64_t n_removed_saves = n_removed_files / 2;
+
+    if (n_removed_saves == 0) {
+        RE::DebugNotification("No save to remove");
+        return;
+    }
+
+    std::string notif = fmt::format("Removed {} save", n_removed_saves);
+    if (n_removed_saves > 1) {
+        notif.append("s");
+    }
+    RE::DebugNotification(notif.c_str());
+}
+
 void manage_saves() {
     auto to_remove = list_saves_to_remove();
 
     SPDLOG_INFO("{} files to remove", to_remove.size());
 
     if (to_remove.size() == 0) {
+        management_finished_callback(to_remove.size());
         return;
     }
 
@@ -19,6 +35,7 @@ void manage_saves() {
 
     if (!Conf::get_singleton().compress) {
         remove_saves(to_remove);
+        management_finished_callback(to_remove.size());
         return;
     }
 
@@ -26,6 +43,7 @@ void manage_saves() {
         compress_saves(to_remove);
         cleanup_saves_archive();
         remove_saves(to_remove);
+        management_finished_callback(to_remove.size());
     });
     t.detach();
 }

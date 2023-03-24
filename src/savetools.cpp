@@ -32,6 +32,7 @@ void compress_saves(const std::vector<std::filesystem::path>& files_to_compress)
 void remove_saves(const std::vector<std::filesystem::path>& files_to_remove) {
     for (const auto& file : files_to_remove) {
         fs::remove(file);
+        SPDLOG_INFO("Removed {}", file.filename().string());
     }
 }
 

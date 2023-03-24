@@ -22,27 +22,15 @@ void setup_log() {
     spdlog::set_default_logger(std::move(loggerPtr));
 }
 
+void message_handler(SKSE::MessagingInterface::Message *message) {
+    if (message->type == SKSE::MessagingInterface::kSaveGame) {
+        manage_saves();
+    }
+}
+
 SKSEPluginLoad(const SKSE::LoadInterface *skse) {
     SKSE::Init(skse);
     setup_log();
-
-    SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message *message) {
-        const Conf& conf = Conf::get_singleton();
-        if (message->type == SKSE::MessagingInterface::kDataLoaded) {
-            SPDLOG_INFO("saves path : {}", conf.saves_path);
-            for (const auto &save : list_saves()) {
-                SPDLOG_INFO("{}", save.filename().string());
-            }
-            SPDLOG_INFO("");
-        }
-        if (message->type == SKSE::MessagingInterface::kSaveGame) {
-            // TODO plugin impl
-            for (const auto &save : list_saves()) {
-                SPDLOG_INFO("{}", save.filename().string());
-            }
-            SPDLOG_INFO("");
-        }
-    });
-
+    SKSE::GetMessagingInterface()->RegisterListener(message_handler);
     return true;
 }

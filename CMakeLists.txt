@@ -36,12 +36,14 @@ set(
     src/Conf.cpp
     src/savetools.cpp
     src/wintools.cpp
+    src/zip.cpp
 )
 
 # Setup your SKSE plugin as an SKSE plugin!
 find_package(CommonLibSSE CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
+find_package(libzip CONFIG REQUIRED)
 
 add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${SRC}) # <--- specifies plugin.cpp
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23) # <--- use C++23 standard
@@ -57,6 +59,7 @@ target_link_libraries(
     PRIVATE nlohmann_json::nlohmann_json
     PRIVATE spdlog::spdlog
     PRIVATE Shlwapi
+    PRIVATE libzip::zip
 )
 
 # When your SKSE .dll is compiled, this will automatically copy the .dll into your mods folder.

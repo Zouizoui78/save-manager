@@ -7,7 +7,12 @@ namespace fs = std::filesystem;
 void manage_saves() {
     auto to_remove = list_saves_to_remove();
 
-    SPDLOG_INFO("Found {} files to remove", to_remove.size());
+    SPDLOG_INFO("{} files to remove", to_remove.size());
+
+    if (to_remove.size() == 0) {
+        return;
+    }
+
     for (const auto &file : to_remove) {
         SPDLOG_INFO(file.filename().string());
     }

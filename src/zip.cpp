@@ -35,15 +35,6 @@ bool zip_files_add(const std::vector<fs::path> &paths, zip_t *zipfile) {
     return no_error;
 }
 
-void zip_callback(zip_t *zipfile, double progress, void *arg) {
-    (void)zipfile;
-    (void)arg;
-    if (progress == 0) {
-        return;
-    }
-    SPDLOG_INFO("Compression progress : {:.0f}%", progress * 100);
-}
-
 void zip_files(const std::vector<std::filesystem::path>& files, const std::string& dest) {
     spdlog::stopwatch sw;
 
@@ -53,7 +44,6 @@ void zip_files(const std::vector<std::filesystem::path>& files, const std::strin
         exit(1);
     }
 
-    zip_register_progress_callback_with_state(zipfile, 0.1, &zip_callback, nullptr, nullptr);
     zip_files_add(files, zipfile);
 
     SPDLOG_INFO("Compressing files...");

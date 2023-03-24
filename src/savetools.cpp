@@ -8,21 +8,30 @@ void manage_saves() {
     auto to_remove = list_saves_to_remove();
 
     SPDLOG_INFO("Found {} files to remove", to_remove.size());
+    for (const auto &file : to_remove) {
+        SPDLOG_INFO(file.filename().string());
+    }
 
-    if (Conf::get_singleton().compress) {
+    if (!Conf::get_singleton().compress) {
+        remove_saves(to_remove);
+        return;
+    }
+
+    std::thread t([to_remove]() {
         compress_saves(to_remove);
         cleanup_saves_archive();
-    }
-    remove_saves(to_remove);
+        remove_saves(to_remove);
+    });
+    t.detach();
 }
 
 void compress_saves(const std::vector<std::filesystem::path>& files_to_compress) {
-    // zip_files(files_to_compress, Conf::get_singleton().archive_path);
+    zip_files(files_to_compress, Conf::get_singleton().archive_path);
 }
 
 void remove_saves(const std::vector<std::filesystem::path>& files_to_remove) {
     for (const auto& file : files_to_remove) {
-        // fs::remove(file);
+        fs::remove(file);
     }
 }
 
@@ -52,7 +61,7 @@ std::vector<fs::path> list_saves(bool sort) {
 
     if (sort) {
         std::sort(files.begin(), files.end(), [](fs::path left, fs::path right) {
-            return get_save_number(left) < get_save_number(right);
+            return fs::last_write_time(left) > fs::last_write_time(right);
         });
     }
 
@@ -61,8 +70,9 @@ std::vector<fs::path> list_saves(bool sort) {
 
 std::vector<fs::path> list_saves_to_remove() {
     auto saves = list_saves();
-    uint16_t saves_to_keep = Conf::get_singleton().n_saves_to_keep;
-    // *2 for the skse co-save
+    // - 1 because the save that is currently being created is not in the list
+    uint16_t saves_to_keep = Conf::get_singleton().n_saves_to_keep - 1;
+    // * 2 for the skse co-save
     return std::vector<fs::path>(saves.begin() + saves_to_keep * 2, saves.end());
 }
 

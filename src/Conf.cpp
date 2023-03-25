@@ -20,7 +20,9 @@ bool Conf::is_loaded() {
 }
 
 void Conf::load(Conf& singleton) {
-    singleton.saves_path = (get_documents_path() / "My Games" / "Skyrim Special Edition" / "Saves").string();
+    std::filesystem::path documents_sse_path = get_documents_path() / "My Games" / "Skyrim Special Edition";
+    singleton.saves_path = (documents_sse_path / "Saves").string();
+    singleton.archive_path = (documents_sse_path / "save-manager.zip").string();
 
     std::ifstream input("Data/SKSE/Plugins/save-manager.json");
 
@@ -32,11 +34,11 @@ void Conf::load(Conf& singleton) {
 
     json j = json::parse(input);
 
-    if (j.contains("saves_path")) {
+    if (j.contains("saves_path") && !j.at("saves_path").empty()) {
         singleton.saves_path = j.at("saves_path").get<std::string>();
     }
 
-    if (j.contains("archive_path")) {
+    if (j.contains("archive_path") && !j.at("archive_path").empty()) {
         singleton.archive_path = j.at("archive_path").get<std::string>();
     }
 

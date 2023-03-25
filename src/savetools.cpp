@@ -94,8 +94,12 @@ std::vector<fs::path> list_saves(bool sort) {
 
 std::vector<fs::path> list_saves_to_remove() {
     auto saves = list_saves();
+    uint32_t saves_to_keep = Conf::get_singleton().n_saves_to_keep;
+    if (saves_to_keep * 2 > saves.size()) {
+        return std::vector<fs::path>();
+    }
     // - 1 because the save that is currently being created is not in the list
-    uint32_t saves_to_keep = Conf::get_singleton().n_saves_to_keep - 1;
+    saves_to_keep--;
     // * 2 for the skse co-save
     return std::vector<fs::path>(saves.begin() + saves_to_keep * 2, saves.end());
 }

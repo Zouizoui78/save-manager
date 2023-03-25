@@ -4,6 +4,8 @@
 
 namespace fs = std::filesystem;
 
+std::mutex mutex;
+
 void management_finished_callback(uint32_t n_removed_files) {
     uint32_t n_removed_saves = n_removed_files / 2;
 
@@ -20,33 +22,30 @@ void management_finished_callback(uint32_t n_removed_files) {
 }
 
 void manage_saves() {
-    auto to_remove = list_saves_to_remove();
-    uint32_t to_remove_size = static_cast<uint32_t>(to_remove.size());
+    std::thread([]() {
+        std::lock_guard lock(mutex);
+        auto to_remove = list_saves_to_remove();
+        uint32_t to_remove_size = static_cast<uint32_t>(to_remove.size());
 
-    SPDLOG_INFO("{} files to remove", to_remove_size);
+        SPDLOG_INFO("{} files to remove", to_remove_size);
 
-    if (to_remove_size == 0) {
-        management_finished_callback(to_remove_size);
-        return;
-    }
+        if (to_remove_size == 0) {
+            management_finished_callback(to_remove_size);
+            return;
+        }
 
-    for (const auto &file : to_remove) {
-        SPDLOG_INFO(file.filename().string());
-    }
+        for (const auto &file : to_remove) {
+            SPDLOG_INFO(file.filename().string());
+        }
 
-    if (!Conf::get_singleton().compress) {
+        if (Conf::get_singleton().compress) {
+            compress_saves(to_remove);
+            cleanup_saves_archive();
+        }
+
         remove_saves(to_remove);
         management_finished_callback(to_remove_size);
-        return;
-    }
-
-    std::thread t([=]() {
-        compress_saves(to_remove);
-        cleanup_saves_archive();
-        remove_saves(to_remove);
-        management_finished_callback(to_remove_size);
-    });
-    t.detach();
+    }).detach();
 }
 
 void compress_saves(const std::vector<std::filesystem::path>& files_to_compress) {

@@ -3,7 +3,6 @@
 
 #include "Conf.hpp"
 #include "savetools.hpp"
-#include "wintools.hpp"
 
 namespace logger = SKSE::log;
 namespace fs = std::filesystem;

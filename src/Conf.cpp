@@ -1,4 +1,5 @@
 #include "Conf.hpp"
+#include "nlohmann/json.hpp"
 #include "wintools.hpp"
 
 using json = nlohmann::json;

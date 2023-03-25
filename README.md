@@ -4,6 +4,8 @@ An SKSE plugin that removes and optionally compresses old saves files every time
 
 By default every time the player saves, save files are removed until only the 10 most recent remain (based on modification time).
 
+If compression is enabled, the saves are compressed into a zip file before being removed.
+
 ## Configuration
 
 At the moment the configuration uses the json format. I'll switch to ini files when I find the time to look for a lib for that.

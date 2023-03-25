@@ -15,7 +15,7 @@ In the meantime, the configuration is stored in `save-manager.json` and looks li
     {
         "saves_path": "Documents/My Games/Skyrim Special Edition/Saves",
         "compress": false,
-        "archive_path": "",
+        "archive_path": "Documents/My Games/Skyrim Special Edition/save-manager.zip",
         "n_saves_to_keep": 10,
         "max_saves_in_archive": 1000
     }

@@ -39,8 +39,17 @@ void manage_saves() {
         }
 
         if (Conf::get_singleton().compress) {
-            compress_saves(to_remove);
-            cleanup_saves_archive();
+            if (!compress_saves(to_remove)) {
+                SPDLOG_ERROR("Failed to compress saves, skipping removal");
+                RE::DebugMessageBox("Error while compressing saves, check logs. No save has been removed.");
+                return;
+            }
+
+            if (!cleanup_saves_archive()) {
+                SPDLOG_ERROR("Failed to remove old saves from archive, skipping removal");
+                RE::DebugMessageBox("Error while removing old saves from archive, check logs. No save has been removed.");
+                return;
+            }
         }
 
         remove_saves(to_remove);
@@ -48,8 +57,8 @@ void manage_saves() {
     }).detach();
 }
 
-void compress_saves(const std::vector<std::filesystem::path>& files_to_compress) {
-    zip_files(files_to_compress, Conf::get_singleton().archive_path);
+bool compress_saves(const std::vector<std::filesystem::path>& files_to_compress) {
+    return zip_files(files_to_compress, Conf::get_singleton().archive_path);
 }
 
 void remove_saves(const std::vector<std::filesystem::path>& files_to_remove) {
@@ -59,8 +68,9 @@ void remove_saves(const std::vector<std::filesystem::path>& files_to_remove) {
     }
 }
 
-void cleanup_saves_archive() {
+bool cleanup_saves_archive() {
     // TODO cleanup archive impl
+    return true;
 }
 
 std::vector<fs::path> list_files_from_directory(const std::string &directory) {

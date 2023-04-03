@@ -34,6 +34,7 @@ set(
     SRC
     src/plugin.cpp
     src/Conf.cpp
+    src/Save.cpp
     src/savetools.cpp
     src/wintools.cpp
     src/zip.cpp

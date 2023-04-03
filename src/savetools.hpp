@@ -2,15 +2,14 @@
 #define SAVETOOLS_HPP
 
 #include <filesystem>
+#include "Save.hpp"
 
-std::vector<std::filesystem::path> list_saves(bool sort = true);
-std::vector<std::filesystem::path> list_saves_to_remove();
-
-uint32_t get_save_number(std::filesystem::path save_path);
+std::vector<Save> list_saves();
+std::vector<Save> list_saves_to_remove();
 
 void manage_saves();
-bool compress_saves(const std::vector<std::filesystem::path>& files_to_compress);
-void remove_saves(const std::vector<std::filesystem::path>& files_to_remove);
+bool compress_saves(const std::vector<Save>& files_to_compress);
+void remove_saves(const std::vector<Save>& files_to_remove);
 bool cleanup_saves_archive();
 
 #endif // SAVETOOLS_HPP

@@ -6,9 +6,7 @@ namespace fs = std::filesystem;
 
 std::mutex mutex;
 
-void management_finished_callback(uint32_t n_removed_files) {
-    uint32_t n_removed_saves = n_removed_files / 2;
-
+void management_finished_callback(uint32_t n_removed_saves) {
     if (n_removed_saves == 0) {
         RE::DebugNotification("No save to remove");
         return;
@@ -27,15 +25,11 @@ void manage_saves() {
         auto to_remove = list_saves_to_remove();
         uint32_t to_remove_size = static_cast<uint32_t>(to_remove.size());
 
-        SPDLOG_INFO("{} files to remove", to_remove_size);
+        SPDLOG_INFO("{} saves to remove", to_remove_size);
 
         if (to_remove_size == 0) {
             management_finished_callback(to_remove_size);
             return;
-        }
-
-        for (const auto& file : to_remove) {
-            SPDLOG_INFO(file.filename().string());
         }
 
         if (Conf::get_singleton().compress) {
@@ -57,14 +51,22 @@ void manage_saves() {
     }).detach();
 }
 
-bool compress_saves(const std::vector<std::filesystem::path>& files_to_compress) {
-    return zip_files(files_to_compress, Conf::get_singleton().archive_path);
+bool compress_saves(const std::vector<Save>& saves) {
+    bool error = false;
+    const Conf& conf = Conf::get_singleton();
+    for (const auto& save : saves) {
+        fs::path archive_path { fs::path(conf.backup_path) / (save.get_name() + ".zip") };
+        if (!zip_files({ save.save, save.skse_cosave }, archive_path.string())) {
+            error = true;
+        }
+    }
+    return !error;
 }
 
-void remove_saves(const std::vector<std::filesystem::path>& files_to_remove) {
-    for (const auto& file : files_to_remove) {
-        fs::remove(file);
-        SPDLOG_INFO("Removed {}", file.filename().string());
+void remove_saves(const std::vector<Save>& saves) {
+    for (const auto& save : saves) {
+        fs::remove(save.save);
+        fs::remove(save.skse_cosave);
     }
 }
 
@@ -81,41 +83,47 @@ std::vector<fs::path> list_files_from_directory(const std::string& directory) {
     return ret;
 }
 
-std::vector<fs::path> list_saves(bool sort) {
+std::vector<Save> list_saves() {
     auto files = list_files_from_directory(Conf::get_singleton().saves_path);
-    for (auto it = files.begin() ; it != files.end() ; ) {
-        std::string ext = it->extension().string();
+    std::vector<Save> saves;
+    for (const auto& file : files) {
+        std::string ext = file.extension().string();
         if (ext != ".ess" && ext != ".skse") {
-            it = files.erase(it);
+            continue;
         }
-        else {
-            ++it;
-        }
-    }
 
-    if (sort) {
-        std::sort(files.begin(), files.end(), [](fs::path left, fs::path right) {
-            return fs::last_write_time(left) > fs::last_write_time(right);
+        auto save_it = std::find_if(saves.begin(), saves.end(), [&](const Save& save) {
+            return save.get_name() == file.stem().string();
         });
+
+        if (save_it == saves.end()) {
+            saves.emplace_back();
+            save_it = saves.end() - 1;
+        }
+
+        if (ext == ".ess") {
+            save_it->save = file;
+        }
+        else if (ext == ".skse") {
+            save_it->skse_cosave = file;
+        }
     }
 
-    return files;
+    return saves;
 }
 
-std::vector<fs::path> list_saves_to_remove() {
+std::vector<Save> list_saves_to_remove() {
     auto saves = list_saves();
+
+    std::sort(saves.begin(), saves.end(), [](const Save& left, const Save& right) {
+        return left.get_last_write_time() > right.get_last_write_time();
+    });
+
     uint32_t saves_to_keep = Conf::get_singleton().n_saves_to_keep;
-    if (saves_to_keep * 2 > saves.size()) {
-        return std::vector<fs::path>();
+    if (saves_to_keep > saves.size()) {
+        return std::vector<Save>();
     }
     // - 1 because the save that is currently being created is not in the list
     saves_to_keep--;
-    // * 2 for the skse co-save
-    return std::vector<fs::path>(saves.begin() + saves_to_keep * 2, saves.end());
-}
-
-uint32_t get_save_number(fs::path save_path) {
-    std::string filename = save_path.filename().string();
-    std::string number_str = filename.substr(4, filename.find_first_of("_"));
-    return std::stoul(number_str, nullptr, 10);
+    return std::vector<Save>(saves.begin() + saves_to_keep, saves.end());
 }

@@ -11,10 +11,10 @@ class Conf final {
 
     // Settings
     std::string saves_path { "" };
-    std::string archive_path { "" };
+    std::string backup_path { "" };
     bool compress { false };
     uint32_t n_saves_to_keep { 10 };
-    uint32_t max_saves_in_archive { 1000 };
+    uint32_t max_backed_up_saves { 1000 };
 
     // API
     static const Conf& get_singleton();

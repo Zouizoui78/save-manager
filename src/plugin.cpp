@@ -38,8 +38,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     }
 
     if (conf.compress) {
-        fs::path archive_directory = fs::path(conf.archive_path).parent_path();
-        fs::create_directories(archive_directory);
+        fs::create_directories(conf.backup_path);
     }
 
     SKSE::GetMessagingInterface()->RegisterListener(message_handler);

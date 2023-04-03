@@ -47,7 +47,7 @@ bool zip_files(const std::vector<std::filesystem::path>& files, const std::strin
     bool ok = zip_files_add(files, zipfile);
     if (!ok) {
         zip_discard(zipfile);
-        SPDLOG_INFO("Failed to add at least one file to archive, discarding changes");
+        SPDLOG_ERROR("Failed to add at least one file to archive, discarding changes");
         return false;
     }
 

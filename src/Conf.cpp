@@ -23,7 +23,7 @@ bool Conf::is_loaded() {
 void Conf::load(Conf& singleton) {
     std::filesystem::path documents_sse_path = get_documents_path() / "My Games" / "Skyrim Special Edition";
     singleton.saves_path = (documents_sse_path / "Saves").string();
-    singleton.archive_path = (documents_sse_path / "save-manager.zip").string();
+    singleton.backup_path = (documents_sse_path / "save-manager").string();
 
     std::ifstream input("Data/SKSE/Plugins/save-manager.json");
 
@@ -39,8 +39,8 @@ void Conf::load(Conf& singleton) {
         singleton.saves_path = j.at("saves_path").get<std::string>();
     }
 
-    if (j.contains("archive_path") && !j.at("archive_path").empty()) {
-        singleton.archive_path = j.at("archive_path").get<std::string>();
+    if (j.contains("backup_path") && !j.at("backup_path").empty()) {
+        singleton.backup_path = j.at("backup_path").get<std::string>();
     }
 
     if (j.contains("compress")) {
@@ -51,8 +51,8 @@ void Conf::load(Conf& singleton) {
         singleton.n_saves_to_keep = j.at("n_saves_to_keep").get<uint32_t>();
     }
 
-    if (j.contains("max_saves_in_archive")) {
-        singleton.max_saves_in_archive = j.at("max_saves_in_archive").get<uint32_t>();
+    if (j.contains("max_backed_up_saves")) {
+        singleton.max_backed_up_saves = j.at("max_backed_up_saves").get<uint32_t>();
     }
 
     _conf_loaded = true;

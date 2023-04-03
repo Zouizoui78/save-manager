@@ -21,13 +21,13 @@ void setup_log() {
     spdlog::set_default_logger(std::move(loggerPtr));
 }
 
-void message_handler(SKSE::MessagingInterface::Message *message) {
+void message_handler(SKSE::MessagingInterface::Message* message) {
     if (message->type == SKSE::MessagingInterface::kSaveGame) {
         manage_saves();
     }
 }
 
-SKSEPluginLoad(const SKSE::LoadInterface *skse) {
+SKSEPluginLoad(const SKSE::LoadInterface* skse) {
     SKSE::Init(skse);
     setup_log();
 

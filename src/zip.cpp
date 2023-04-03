@@ -6,17 +6,17 @@
 
 namespace fs = std::filesystem;
 
-bool zip_files_add(const std::vector<fs::path> &paths, zip_t *zipfile) {
+bool zip_files_add(const std::vector<fs::path>& paths, zip_t* zipfile) {
     if (zipfile == nullptr) {
         SPDLOG_ERROR("Can't add files, zipfile = nullptr");
         return false;
     }
 
     bool no_error = true;
-    for (const auto &path : paths) {
+    for (const auto& path : paths) {
         SPDLOG_DEBUG("Trying to add {} to archive...", path.filename().string());
 
-        zip_source_t *source = zip_source_file(zipfile, path.string().c_str(), 0, 0);
+        zip_source_t* source = zip_source_file(zipfile, path.string().c_str(), 0, 0);
         if (source == nullptr) {
             SPDLOG_ERROR("Failed to create source from {} : {}", path.filename().string(), zip_strerror(zipfile));
             no_error = false;
@@ -38,7 +38,7 @@ bool zip_files_add(const std::vector<fs::path> &paths, zip_t *zipfile) {
 bool zip_files(const std::vector<std::filesystem::path>& files, const std::string& dest) {
     spdlog::stopwatch sw;
 
-    zip_t *zipfile = zip_open(dest.c_str(), ZIP_CREATE, nullptr);
+    zip_t* zipfile = zip_open(dest.c_str(), ZIP_CREATE, nullptr);
     if (zipfile == nullptr) {
         SPDLOG_ERROR("Failed to open {}", dest);
         return false;

@@ -34,7 +34,7 @@ void manage_saves() {
             return;
         }
 
-        for (const auto &file : to_remove) {
+        for (const auto& file : to_remove) {
             SPDLOG_INFO(file.filename().string());
         }
 
@@ -73,9 +73,9 @@ bool cleanup_saves_archive() {
     return true;
 }
 
-std::vector<fs::path> list_files_from_directory(const std::string &directory) {
+std::vector<fs::path> list_files_from_directory(const std::string& directory) {
     std::vector<fs::path> ret;
-    for (const auto &dir_entry : fs::directory_iterator(directory)) {
+    for (const auto& dir_entry : fs::directory_iterator(directory)) {
         ret.emplace_back(dir_entry.path());
     }
     return ret;

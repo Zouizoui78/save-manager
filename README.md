@@ -4,7 +4,7 @@ An SKSE plugin that removes and optionally compresses old saves files every time
 
 By default save files are removed until only the 10 most recent remain (based on modification time).
 
-If compression is enabled, the saves are compressed into a zip file before being removed.
+If compression is enabled, the saves are compressed into a zip files (one per pair of save + skse cosave) before being removed.
 
 ## Why
 
@@ -21,9 +21,9 @@ In the meantime, the configuration is stored in `save-manager.json` and looks li
     {
         "saves_path": "Documents/My Games/Skyrim Special Edition/Saves",
         "compress": false,
-        "archive_path": "Documents/My Games/Skyrim Special Edition/save-manager.zip",
+        "backup_path": "Documents/My Games/Skyrim Special Edition/save-manager",
         "n_saves_to_keep": 10,
-        "max_saves_in_archive": 1000
+        "max_backed_up_saves": 1000
     }
 
 These are the default values.

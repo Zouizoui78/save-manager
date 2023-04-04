@@ -4,7 +4,7 @@ An SKSE plugin that removes and optionally compresses old saves files every time
 
 By default save files are removed until only the 10 most recent remain (based on modification time).
 
-If compression is enabled, the saves are compressed into a zip files (one per pair of save + skse cosave) before being removed.
+If compression is enabled, the saves are compressed into zip files (one per pair of save + skse cosave) before being removed.
 
 ## Why
 

@@ -1,18 +1,13 @@
 #include "Save.hpp"
 
 std::string Save::get_name() const {
-    return save.stem().string();
-}
-
-uint32_t Save::get_number() const {
-    std::string filename = save.filename().string();
-    std::string number_str = filename.substr(4, filename.find_first_of("_"));
-    return std::stoul(number_str, nullptr, 10);
+    return save.empty() ? skse_cosave.stem().string() : save.stem().string();
 }
 
 std::filesystem::file_time_type Save::get_last_write_time() const {
-    if (save.empty()) {
+    std::filesystem::path path = save.empty() ? skse_cosave : save;
+    if (path.empty()) {
         return std::filesystem::file_time_type {};
     }
-    return std::filesystem::last_write_time(save);
+    return std::filesystem::last_write_time(path);
 }

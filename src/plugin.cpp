@@ -23,7 +23,7 @@ void setup_log() {
 
 void message_handler(SKSE::MessagingInterface::Message* message) {
     if (message->type == SKSE::MessagingInterface::kSaveGame) {
-        manage_saves();
+        manage_saves(static_cast<char *>(message->data));
     }
 }
 

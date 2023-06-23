@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 3.21)
 # Set your project name. This will be the name of your SKSE .dll file.
 project(save-manager VERSION 0.0.1 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 # #
 # YOU DO NOT NEED TO EDIT ANYTHING BELOW HERE
 # #
@@ -36,6 +39,7 @@ set(
     src/Conf.cpp
     src/Save.cpp
     src/savetools.cpp
+    src/tools.cpp
     src/wintools.cpp
     src/zip.cpp
 )

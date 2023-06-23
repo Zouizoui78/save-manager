@@ -1,13 +1,12 @@
 #include "Save.hpp"
+#include "tools.hpp"
 
 std::string Save::get_name() const {
     return save.empty() ? skse_cosave.stem().string() : save.stem().string();
 }
 
-std::filesystem::file_time_type Save::get_last_write_time() const {
-    std::filesystem::path path = save.empty() ? skse_cosave : save;
-    if (path.empty()) {
-        return std::filesystem::file_time_type {};
-    }
-    return std::filesystem::last_write_time(path);
+uint32_t Save::get_number() const {
+    return save.empty() ?
+        tools::get_save_number(skse_cosave.filename().string()) :
+        tools::get_save_number(save.filename().string());
 }

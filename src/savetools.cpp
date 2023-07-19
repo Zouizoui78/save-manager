@@ -1,7 +1,9 @@
 #include "Conf.hpp"
 #include "savetools.hpp"
 #include "tools.hpp"
-#include "zip.hpp"
+#include "ziptools.hpp"
+
+namespace savetools {
 
 namespace fs = std::filesystem;
 
@@ -22,7 +24,7 @@ void management_finished_callback(uint32_t n_removed_saves) {
 }
 
 void manage_saves(const std::string &new_save_name) {
-    if (!tools::is_manual_save(new_save_name)) {
+    if (!Save::is_manual(new_save_name)) {
         SPDLOG_DEBUG("Not a manual save, skipping");
         return;
     }
@@ -63,7 +65,7 @@ bool compress_saves(const std::vector<Save>& saves) {
     for (const auto& save : saves) {
         fs::path archive_path { fs::path(conf.backup_path) / (save.get_name() + ".zip") };
         SPDLOG_DEBUG("Compressing save '{}' to '{}'", save.get_name(), archive_path.string());
-        if (!zip_files({ save.save, save.skse_cosave }, archive_path.string())) {
+        if (!ziptools::zip_files({ save.save, save.skse_cosave }, archive_path.string())) {
             ok = false;
         }
     }
@@ -87,7 +89,7 @@ bool cleanup_saves_archive() {
     }
 
     std::ranges::sort(compressed_saves, [](const fs::path &a, const fs::path &b) {
-        return tools::get_save_number(a.filename().string()) > tools::get_save_number(b.filename().string());
+        return Save::get_number(a.filename().string()) > Save::get_number(b.filename().string());
     });
 
     bool ok = true;
@@ -110,7 +112,7 @@ std::vector<Save> list_saves() {
             continue;
         }
 
-        if (!tools::is_manual_save(file.filename().string())) {
+        if (!Save::is_manual(file.filename().string())) {
             SPDLOG_DEBUG("Skipping file '{}'", file.filename().string());
             continue;
         }
@@ -149,3 +151,5 @@ std::vector<Save> list_saves_to_remove() {
     // - 1 because the save that is currently being created is not in the list
     return std::vector<Save>(saves.begin() + saves_to_keep - 1, saves.end());
 }
+
+} // namespace savetools

@@ -23,7 +23,7 @@ void setup_log() {
 
 void message_handler(SKSE::MessagingInterface::Message* message) {
     if (message->type == SKSE::MessagingInterface::kSaveGame) {
-        manage_saves(static_cast<char *>(message->data));
+        savetools::manage_saves(static_cast<char *>(message->data));
     }
 }
 
@@ -37,7 +37,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse) {
         return true;
     }
 
-    if (conf.compress) {
+    if (conf.compress && !fs::exists(conf.backup_path)) {
         fs::create_directories(conf.backup_path);
     }
 

@@ -1,8 +1,12 @@
-#ifndef ZIP_HPP
-#define ZIP_HPP
+#ifndef ZIPTOOLS_HPP
+#define ZIPTOOLS_HPP
 
 #include <filesystem>
 
+namespace ziptools {
+
 bool zip_files(const std::vector<std::filesystem::path>& files, const std::string& dest);
 
-#endif // ZIP_HPP
+} // namespace ziptools
+
+#endif // ZIPTOOLS_HPP

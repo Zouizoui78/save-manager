@@ -21,7 +21,7 @@ bool Conf::is_loaded() {
 }
 
 void Conf::load(Conf& singleton) {
-    std::filesystem::path documents_sse_path = get_documents_path() / "My Games" / "Skyrim Special Edition";
+    std::filesystem::path documents_sse_path = wintools::get_documents_path() / "My Games" / "Skyrim Special Edition";
     singleton.saves_path = (documents_sse_path / "Saves").string();
     singleton.backup_path = (documents_sse_path / "save-manager").string();
 

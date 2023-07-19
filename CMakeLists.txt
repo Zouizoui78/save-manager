@@ -41,7 +41,7 @@ set(
     src/savetools.cpp
     src/tools.cpp
     src/wintools.cpp
-    src/zip.cpp
+    src/ziptools.cpp
 )
 
 # Setup your SKSE plugin as an SKSE plugin!

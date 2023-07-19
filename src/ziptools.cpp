@@ -1,8 +1,10 @@
-#include "zip.hpp"
+#include "ziptools.hpp"
 #include "zip.h" // libzip
 
 #include "spdlog/spdlog.h"
 #include "spdlog/stopwatch.h"
+
+namespace ziptools {
 
 namespace fs = std::filesystem;
 
@@ -59,3 +61,5 @@ bool zip_files(const std::vector<std::filesystem::path>& files, const std::strin
     SPDLOG_INFO("Done compressing in {:.3f}s", sw);
     return true;
 }
+
+} // namespace ziptools

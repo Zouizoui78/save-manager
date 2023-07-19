@@ -3,6 +3,8 @@
 #include <shlobj.h>
 #include <shlwapi.h>
 
+namespace wintools {
+
 namespace fs = std::filesystem;
 
 fs::path get_documents_path() {
@@ -24,3 +26,5 @@ fs::path get_documents_path() {
 
     return fs::path(path);
 }
+
+} // namespace wintools

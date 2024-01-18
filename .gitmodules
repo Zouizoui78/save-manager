@@ -1,0 +1,3 @@
+[submodule "external/CommonLibSSE"]
+	path = external/CommonLibSSE
+	url = git@github.com:powerof3/CommonLibSSE.git

@@ -7,13 +7,42 @@
 namespace logger = SKSE::log;
 namespace fs = std::filesystem;
 
+extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() {
+    SKSE::PluginVersionData v;
+    v.PluginVersion(1);
+    v.PluginName("save-manager");
+    v.AuthorName("zoui");
+    v.CompatibleVersions({0});
+    return v;
+}();
+
+extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
+{
+    a_info->infoVersion = SKSE::PluginInfo::kVersion;
+    a_info->name = "save-manager";
+    a_info->version = 1;
+
+    if (a_skse->IsEditor()) {
+        logger::critical("Loaded in editor, marking as incompatible"sv);
+        return false;
+    }
+
+    const auto ver = a_skse->RuntimeVersion();
+    if (ver < SKSE::RUNTIME_1_5_39) {
+        logger::critical(FMT_STRING("Unsupported runtime version {}"), ver.string());
+        return false;
+    }
+
+    return true;
+}
+
 void setup_log() {
     auto logsFolder = SKSE::log::log_directory();
     if (!logsFolder) {
         SKSE::stl::report_and_fail("SKSE log_directory not provided, logs disabled.");
         return;
     }
-    auto pluginName = SKSE::PluginDeclaration::GetSingleton()->GetName();
+    auto pluginName = "save-manager";
     auto logFilePath = *logsFolder / std::format("{}.log", pluginName);
     auto fileLoggerPtr = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFilePath.string(), true);
     auto loggerPtr = std::make_shared<spdlog::logger>("log", std::move(fileLoggerPtr));
@@ -27,7 +56,7 @@ void message_handler(SKSE::MessagingInterface::Message* message) {
     }
 }
 
-SKSEPluginLoad(const SKSE::LoadInterface* skse) {
+extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* skse) {
     SKSE::Init(skse);
     setup_log();
 

@@ -3,9 +3,9 @@
     "name": "save-manager",
     "version-string": "0.0.1",
     "dependencies": [
-        "commonlibsse-ng",
         "libzip",
         "nlohmann-json",
+        "rsm-binary-io",
         "spdlog"
     ]
 }

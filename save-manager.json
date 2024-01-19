@@ -1,0 +1,7 @@
+{
+    "saves_path": "Documents/My Games/Skyrim Special Edition/Saves",
+    "compress": false,
+    "backup_path": "Documents/My Games/Skyrim Special Edition/save-manager",
+    "n_saves_to_keep": 10,
+    "max_backed_up_saves": 1000
+}

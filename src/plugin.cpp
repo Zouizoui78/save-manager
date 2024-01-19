@@ -23,7 +23,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* sks
         return true;
     }
 
-    if (conf.compress && !fs::exists(conf.backup_path)) {
+    if (conf.backup && !fs::exists(conf.backup_path)) {
         fs::create_directories(conf.backup_path);
     }
 

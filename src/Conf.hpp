@@ -11,7 +11,7 @@ class Conf final {
     // Settings
     std::string saves_path { "" };
     std::string backup_path { "" };
-    bool compress { false };
+    bool backup { false };
     uint32_t n_saves_to_keep { 10 };
     uint32_t max_backed_up_saves { 1000 };
 

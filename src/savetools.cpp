@@ -41,7 +41,7 @@ void manage_saves(const std::string &new_save_name) {
             return;
         }
 
-        if (conf.compress) {
+        if (conf.backup) {
             if (!compress_saves(to_remove)) {
                 SPDLOG_ERROR("Failed to compress saves, skipping removal");
                 RE::DebugMessageBox("Error while compressing saves, check logs. No save has been removed.");

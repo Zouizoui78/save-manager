@@ -43,8 +43,8 @@ void Conf::load(Conf& singleton) {
         singleton.backup_path = j.at("backup_path").get<std::string>();
     }
 
-    if (j.contains("compress")) {
-        singleton.compress = j.at("compress").get<bool>();
+    if (j.contains("backup")) {
+        singleton.backup = j.at("backup").get<bool>();
     }
 
     if (j.contains("n_saves_to_keep")) {

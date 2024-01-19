@@ -10,7 +10,7 @@ If backup is enabled, the saves are compressed into zip files (one zip per { sav
 
 I'm always scared that Todd corrupts my save so I only create new saves instead of overwriting to be able to go back in time if some troublesome bug occurs. This quickly leads to a bloated save directory holding hundreds of files.
 
-I use to manually manage them but I grew tired of it so I did this plugin to do it automatically.
+I use to manually manage them but I grew tired of it so I made this plugin to do it automatically.
 
 ## Configuration
 

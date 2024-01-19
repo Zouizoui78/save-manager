@@ -1,16 +1,14 @@
 cmake_minimum_required(VERSION 3.21)
 project(save-manager VERSION 0.0.1 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-if(DEFINED ENV{SKYRIM_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_FOLDER}/Data")
-    set(OUTPUT_FOLDER "$ENV{SKYRIM_FOLDER}/Data")
-endif()
-
 if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
     set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/${PROJECT_NAME}")
 endif()
+
+add_subdirectory(external/CommonLibSSE)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(libzip CONFIG REQUIRED)
 
 set(
     SRC
@@ -24,17 +22,10 @@ set(
     src/ziptools.cpp
 )
 
-add_subdirectory(external/CommonLibSSE)
-find_package(nlohmann_json CONFIG REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
-find_package(libzip CONFIG REQUIRED)
-
 add_library(${PROJECT_NAME} SHARED ${SRC})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h)
-
-add_compile_definitions(SKYRIM_AE)
-add_compile_definitions(SKYRIM_SUPPORT_AE)
+target_compile_definitions(${PROJECT_NAME} PRIVATE SKYRIM_SUPPORT_AE)
 
 target_include_directories(
     ${PROJECT_NAME}
@@ -44,11 +35,11 @@ target_include_directories(
 
 target_link_libraries(
     ${PROJECT_NAME}
+    PRIVATE CommonLibSSE::CommonLibSSE
     PRIVATE nlohmann_json::nlohmann_json
     PRIVATE spdlog::spdlog
     PRIVATE Shlwapi
     PRIVATE libzip::zip
-    PRIVATE CommonLibSSE::CommonLibSSE
 )
 
 if(DEFINED OUTPUT_FOLDER)

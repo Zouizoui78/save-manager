@@ -36,9 +36,13 @@ void setup_log() {
         SKSE::stl::report_and_fail("SKSE log_directory not provided, logs disabled.");
         return;
     }
+
     auto logFilePath = *logsFolder / std::format("{}.log", version::PROJECT);
     auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFilePath.string(), true);
     auto logger = std::make_shared<spdlog::logger>("log", std::move(sink));
-    logger->set_level(spdlog::level::trace);
+
+    logger->set_level(spdlog::level::info);
+    logger->flush_on(spdlog::level::info);
+
     spdlog::set_default_logger(std::move(logger));
 }

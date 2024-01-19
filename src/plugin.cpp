@@ -28,5 +28,6 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* sks
     }
 
     SKSE::GetMessagingInterface()->RegisterListener(message_handler);
+    spdlog::info("Plugin successfully initialized");
     return true;
 }

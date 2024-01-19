@@ -1,5 +1,4 @@
-#ifndef CONF_HPP
-#define CONF_HPP
+#pragma once
 
 #include <mutex>
 #include <thread>
@@ -35,5 +34,3 @@ class Conf final {
     static bool _conf_loaded;
     static std::mutex _mutex;
 };
-
-#endif // CONF_HPP

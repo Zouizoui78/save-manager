@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 3.21)
+
 project(save-manager VERSION 0.0.1 LANGUAGES CXX)
 
-if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
-    set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/${PROJECT_NAME}")
-endif()
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/version.h
+    @ONLY
+)
 
 add_subdirectory(external/CommonLibSSE)
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -13,6 +16,7 @@ find_package(libzip CONFIG REQUIRED)
 set(
     SRC
     src/PCH.h
+    src/plugin_init.hpp
     src/plugin.cpp
     src/Conf.cpp
     src/Save.cpp
@@ -29,6 +33,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE SKYRIM_SUPPORT_AE)
 
 target_include_directories(
     ${PROJECT_NAME}
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
     PRIVATE src
     PRIVATE external/CommonLibSSE/include
 )
@@ -41,6 +46,10 @@ target_link_libraries(
     PRIVATE Shlwapi
     PRIVATE libzip::zip
 )
+
+if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
+    set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/${PROJECT_NAME}")
+endif()
 
 if(DEFINED OUTPUT_FOLDER)
     set(DLL_FOLDER "${OUTPUT_FOLDER}/SKSE/Plugins")

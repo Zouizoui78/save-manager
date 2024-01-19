@@ -1,5 +1,4 @@
-#ifndef SAVETOOLS_HPP
-#define SAVETOOLS_HPP
+#pragma once
 
 #include <filesystem>
 #include "Save.hpp"
@@ -15,5 +14,3 @@ void remove_saves(const std::vector<Save>& files_to_remove);
 bool cleanup_saves_archive();
 
 } // namespace savetools
-
-#endif // SAVETOOLS_HPP

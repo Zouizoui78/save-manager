@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
+option(SKYRIM_AE "Build for Skyrim AE" OFF)
+
 project(save-manager VERSION 0.0.1 LANGUAGES CXX)
 
 configure_file(
@@ -7,11 +9,6 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/include/version.h
     @ONLY
 )
-
-add_subdirectory(external/CommonLibSSE)
-find_package(nlohmann_json CONFIG REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
-find_package(libzip CONFIG REQUIRED)
 
 set(
     SRC
@@ -29,7 +26,15 @@ set(
 add_library(${PROJECT_NAME} SHARED ${SRC})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h)
-target_compile_definitions(${PROJECT_NAME} PRIVATE SKYRIM_SUPPORT_AE)
+
+if(SKYRIM_AE)
+    add_compile_definitions(SKYRIM_SUPPORT_AE)
+endif()
+
+add_subdirectory(external/CommonLibSSE)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(libzip CONFIG REQUIRED)
 
 target_include_directories(
     ${PROJECT_NAME}

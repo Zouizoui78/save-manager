@@ -1,15 +1,17 @@
 #pragma once
 
+#ifdef SKYRIM_SUPPORT_AE
 extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() {
     SKSE::PluginVersionData v;
     v.PluginVersion(REL::Version{version::MAJOR, version::MINOR, version::PATCH});
     v.PluginName(version::PROJECT);
     v.AuthorName("zoui");
     v.UsesAddressLibrary();
+    v.UsesUpdatedStructs();
 	v.CompatibleVersions({ SKSE::RUNTIME_LATEST });
     return v;
 }();
-
+#else
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 {
     a_info->infoVersion = SKSE::PluginInfo::kVersion;
@@ -29,6 +31,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 
     return true;
 }
+#endif
 
 void setup_log() {
     auto logsFolder = SKSE::log::log_directory();

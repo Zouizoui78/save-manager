@@ -4,7 +4,6 @@
         {
             "name": "base",
             "hidden": true,
-            "binaryDir": "${sourceDir}/build/${presetName}",
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
@@ -22,6 +21,7 @@
         },
         {
             "name": "debug",
+            "hidden": true,
             "inherits": [
                 "base"
             ],
@@ -32,6 +32,7 @@
         },
         {
             "name": "release",
+            "hidden": true,
             "inherits": [
                 "base"
             ],
@@ -39,17 +40,64 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "ae",
+            "hidden": true,
+            "cacheVariables": {
+                "SKYRIM_AE": true
+            }
+        },
+        {
+            "name": "debug-se",
+            "inherits": [
+                "debug"
+            ],
+            "binaryDir": "${sourceDir}/build/debug/se"
+        },
+        {
+            "name": "release-se",
+            "inherits": [
+                "release"
+            ],
+            "binaryDir": "${sourceDir}/build/release/se"
+        },
+        {
+            "name": "debug-ae",
+            "inherits": [
+                "debug",
+                "ae"
+            ],
+            "binaryDir": "${sourceDir}/build/debug/ae"
+        },
+        {
+            "name": "release-ae",
+            "inherits": [
+                "release",
+                "ae"
+            ],
+            "binaryDir": "${sourceDir}/build/release/ae"
         }
     ],
     "buildPresets": [
         {
-            "name": "debug",
-            "configurePreset": "debug",
+            "name": "debug-se",
+            "configurePreset": "debug-se",
             "configuration": "Debug"
         },
         {
-            "name": "release",
-            "configurePreset": "release",
+            "name": "release-se",
+            "configurePreset": "release-se",
+            "configuration": "Release"
+        },
+        {
+            "name": "debug-ae",
+            "configurePreset": "debug-ae",
+            "configuration": "Debug"
+        },
+        {
+            "name": "release-ae",
+            "configurePreset": "release-ae",
             "configuration": "Release"
         }
     ]

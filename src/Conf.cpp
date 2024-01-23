@@ -16,12 +16,11 @@ const Conf& Conf::get_singleton() {
     return singleton;
 }
 
-bool Conf::is_loaded() {
-    return _conf_loaded;
-}
+bool Conf::is_loaded() { return _conf_loaded; }
 
 void Conf::load(Conf& singleton) {
-    std::filesystem::path documents_sse_path = wintools::get_documents_path() / "My Games" / "Skyrim Special Edition";
+    std::filesystem::path documents_sse_path =
+        wintools::get_documents_path() / "My Games" / "Skyrim Special Edition";
     singleton.saves_path = (documents_sse_path / "Saves").string();
     singleton.backup_path = (documents_sse_path / "save-manager").string();
 
@@ -52,7 +51,8 @@ void Conf::load(Conf& singleton) {
     }
 
     if (j.contains("max_backed_up_saves")) {
-        singleton.max_backed_up_saves = j.at("max_backed_up_saves").get<uint32_t>();
+        singleton.max_backed_up_saves =
+            j.at("max_backed_up_saves").get<uint32_t>();
     }
 
     _conf_loaded = true;

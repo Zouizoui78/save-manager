@@ -1,5 +1,5 @@
-#include "Conf.hpp"
 #include "savetools.hpp"
+#include "Conf.hpp"
 #include "tools.hpp"
 #include "ziptools.hpp"
 
@@ -7,7 +7,7 @@ namespace savetools {
 
 namespace fs = std::filesystem;
 
-const Conf &conf = Conf::get_singleton();
+const Conf& conf = Conf::get_singleton();
 std::mutex mutex;
 
 void management_finished_callback(uint32_t n_removed_saves) {
@@ -23,7 +23,7 @@ void management_finished_callback(uint32_t n_removed_saves) {
     RE::DebugNotification(notif.c_str());
 }
 
-void manage_saves(const std::string &new_save_name) {
+void manage_saves(const std::string& new_save_name) {
     if (!Save::is_manual(new_save_name)) {
         SPDLOG_DEBUG("Not a manual save, skipping");
         return;
@@ -44,13 +44,17 @@ void manage_saves(const std::string &new_save_name) {
         if (conf.backup) {
             if (!compress_saves(to_remove)) {
                 SPDLOG_ERROR("Failed to compress saves, skipping removal");
-                RE::DebugMessageBox("Error while compressing saves, check logs. No save has been removed.");
+                RE::DebugMessageBox("Error while compressing saves, check "
+                                    "logs. No save has been removed.");
                 return;
             }
 
             if (conf.max_backed_up_saves > 0 && !cleanup_saves_archive()) {
-                SPDLOG_ERROR("Failed to remove one or more old compressed saves");
-                RE::DebugMessageBox("Error while removing old saves from archive, check logs. No save has been removed.");
+                SPDLOG_ERROR(
+                    "Failed to remove one or more old compressed saves");
+                RE::DebugMessageBox(
+                    "Error while removing old saves from archive, check logs. "
+                    "No save has been removed.");
                 return;
             }
         }
@@ -63,9 +67,12 @@ void manage_saves(const std::string &new_save_name) {
 bool compress_saves(const std::vector<Save>& saves) {
     bool ok = true;
     for (const auto& save : saves) {
-        fs::path archive_path { fs::path(conf.backup_path) / (save.get_name() + ".zip") };
-        SPDLOG_DEBUG("Compressing save '{}' to '{}'", save.get_name(), archive_path.string());
-        if (!ziptools::zip_files({ save.save, save.skse_cosave }, archive_path.string())) {
+        fs::path archive_path{fs::path(conf.backup_path) /
+                              (save.get_name() + ".zip")};
+        SPDLOG_DEBUG("Compressing save '{}' to '{}'", save.get_name(),
+                     archive_path.string());
+        if (!ziptools::zip_files({save.save, save.skse_cosave},
+                                 archive_path.string())) {
             ok = false;
         }
     }
@@ -88,18 +95,22 @@ bool cleanup_saves_archive() {
         return true;
     }
 
-    std::ranges::sort(compressed_saves, [](const fs::path &a, const fs::path &b) {
-        return Save::get_number(a.filename().string()) > Save::get_number(b.filename().string());
-    });
+    std::ranges::sort(compressed_saves,
+                      [](const fs::path& a, const fs::path& b) {
+                          return Save::get_number(a.filename().string()) >
+                                 Save::get_number(b.filename().string());
+                      });
 
     bool ok = true;
-    std::for_each(compressed_saves.begin() + conf.max_backed_up_saves, compressed_saves.end(), [&ok](const fs::path &file) {
-        SPDLOG_INFO("Removing file '{}'", file.string());
-        if (!fs::remove(file)) {
-            SPDLOG_ERROR("Failed to remove file '{}'", file.string());
-            ok = false;
-        }
-    });
+    std::for_each(compressed_saves.begin() + conf.max_backed_up_saves,
+                  compressed_saves.end(), [&ok](const fs::path& file) {
+                      SPDLOG_INFO("Removing file '{}'", file.string());
+                      if (!fs::remove(file)) {
+                          SPDLOG_ERROR("Failed to remove file '{}'",
+                                       file.string());
+                          ok = false;
+                      }
+                  });
     return ok;
 }
 
@@ -117,9 +128,10 @@ std::vector<Save> list_saves() {
             continue;
         }
 
-        auto save_it = std::find_if(saves.begin(), saves.end(), [&](const Save& save) {
-            return save.get_name() == file.stem().string();
-        });
+        auto save_it =
+            std::find_if(saves.begin(), saves.end(), [&](const Save& save) {
+                return save.get_name() == file.stem().string();
+            });
 
         if (save_it == saves.end()) {
             saves.emplace_back();
@@ -128,8 +140,7 @@ std::vector<Save> list_saves() {
 
         if (ext == ".ess") {
             save_it->save = file;
-        }
-        else if (ext == ".skse") {
+        } else if (ext == ".skse") {
             save_it->skse_cosave = file;
         }
     }
@@ -140,9 +151,10 @@ std::vector<Save> list_saves() {
 std::vector<Save> list_saves_to_remove() {
     auto saves = list_saves();
 
-    std::sort(saves.begin(), saves.end(), [](const Save& left, const Save& right) {
-        return left.get_number() > right.get_number();
-    });
+    std::sort(saves.begin(), saves.end(),
+              [](const Save& left, const Save& right) {
+                  return left.get_number() > right.get_number();
+              });
 
     uint32_t saves_to_keep = conf.n_saves_to_keep;
     if (saves_to_keep > saves.size()) {

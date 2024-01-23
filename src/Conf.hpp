@@ -6,14 +6,13 @@
 #include "spdlog/spdlog.h"
 
 class Conf final {
-    public:
-
+public:
     // Settings
-    std::string saves_path { "" };
-    std::string backup_path { "" };
-    bool backup { false };
-    uint32_t n_saves_to_keep { 10 };
-    uint32_t max_backed_up_saves { 1000 };
+    std::string saves_path{""};
+    std::string backup_path{""};
+    bool backup{false};
+    uint32_t n_saves_to_keep{10};
+    uint32_t max_backed_up_saves{1000};
 
     // API
     static const Conf& get_singleton();
@@ -26,7 +25,7 @@ class Conf final {
     Conf& operator=(const Conf&) = delete;
     Conf& operator=(Conf&&) = delete;
 
-    private:
+private:
     Conf() = default;
     ~Conf() = default;
 

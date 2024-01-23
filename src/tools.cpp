@@ -12,4 +12,4 @@ std::vector<fs::path> list_files_from_directory(const std::string& directory) {
     return ret;
 }
 
-}
+} // namespace tools

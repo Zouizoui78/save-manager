@@ -25,10 +25,6 @@ SKSEPlugin_Load(const SKSE::LoadInterface *skse) {
         return true;
     }
 
-    if (conf.backup && !fs::exists(conf.backup_path)) {
-        fs::create_directories(conf.backup_path);
-    }
-
     SKSE::GetMessagingInterface()->RegisterListener(message_handler);
     spdlog::info("Plugin successfully initialized");
     return true;

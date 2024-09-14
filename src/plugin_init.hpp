@@ -14,7 +14,7 @@ extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() {
 }();
 #else
 extern "C" DLLEXPORT bool SKSEAPI
-SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info) {
+SKSEPlugin_Query(const SKSE::QueryInterface *a_skse, SKSE::PluginInfo *a_info) {
     a_info->infoVersion = SKSE::PluginInfo::kVersion;
     a_info->name = version::PROJECT;
     a_info->version = version::MAJOR;

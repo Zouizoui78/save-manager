@@ -15,21 +15,21 @@ public:
     uint32_t max_backed_up_saves{1000};
 
     // API
-    static const Conf& get_singleton();
+    static const Conf &get_singleton();
     static bool is_loaded();
 
     // Deleted constructors should be public
     // to get better compiler messages
-    Conf(const Conf& other) = delete;
-    Conf(Conf&&) = delete;
-    Conf& operator=(const Conf&) = delete;
-    Conf& operator=(Conf&&) = delete;
+    Conf(const Conf &other) = delete;
+    Conf(Conf &&) = delete;
+    Conf &operator=(const Conf &) = delete;
+    Conf &operator=(Conf &&) = delete;
 
 private:
     Conf() = default;
     ~Conf() = default;
 
-    static void load(Conf& singleton);
+    static void load(Conf &singleton);
     static bool _conf_loaded;
     static std::mutex _mutex;
 };

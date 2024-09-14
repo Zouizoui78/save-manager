@@ -11,6 +11,6 @@ struct Save {
 
     uint32_t get_number() const;
 
-    static uint32_t get_number(const std::string& filename);
-    static bool is_manual(const std::string& filename);
+    static uint32_t get_number(const std::string &filename);
+    static bool is_manual(const std::string &filename);
 };

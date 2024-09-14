@@ -7,7 +7,7 @@ using json = nlohmann::json;
 bool Conf::_conf_loaded = false;
 std::mutex Conf::_mutex;
 
-const Conf& Conf::get_singleton() {
+const Conf &Conf::get_singleton() {
     std::lock_guard<std::mutex> lock(_mutex);
     static Conf singleton;
     if (!is_loaded()) {
@@ -16,9 +16,11 @@ const Conf& Conf::get_singleton() {
     return singleton;
 }
 
-bool Conf::is_loaded() { return _conf_loaded; }
+bool Conf::is_loaded() {
+    return _conf_loaded;
+}
 
-void Conf::load(Conf& singleton) {
+void Conf::load(Conf &singleton) {
     std::filesystem::path documents_sse_path =
         wintools::get_documents_path() / "My Games" / "Skyrim Special Edition";
     singleton.saves_path = (documents_sse_path / "Saves").string();

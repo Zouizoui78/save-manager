@@ -22,7 +22,7 @@ void manage_saves(const std::string &new_save_name) {
         return;
     }
 
-    std::thread([&new_save_name]() {
+    std::thread([new_save_name]() {
         std::lock_guard lock(mutex);
 
         std::string character_id = Save::parse_character_id(new_save_name);
@@ -105,32 +105,34 @@ void remove_saves(const std::vector<Save> &saves) {
 
 bool cleanup_saves_archive(const std::string &character_id) {
     auto compressed_saves_files = tools::list_files_from_directory(
-        (fs::path(conf.backup_path) / character_id).string());
+        fs::path(conf.backup_path) / character_id, {"Save", ".zip"});
 
-    std::vector<Save> compressed_saves;
+    std::vector<fs::path> compressed_saves;
     for (const auto &file : compressed_saves_files) {
-        auto save = Save::from_save_path(file.string());
-        if (save.has_value()) {
-            compressed_saves.emplace_back(std::move(*save));
+        if (Save::parse_character_id(file.string()).empty()) {
+            continue;
         }
+
+        compressed_saves.emplace_back(file);
     }
 
     if (compressed_saves.size() <= conf.max_backed_up_saves) {
         return true;
     }
 
-    std::ranges::sort(compressed_saves, [](const Save &a, const Save &b) {
-        return a.get_number() > b.get_number();
-    });
+    std::ranges::sort(compressed_saves,
+                      [](const fs::path &a, const fs::path &b) {
+                          return Save::parse_number(a.stem().string()) >
+                                 Save::parse_number(b.stem().string());
+                      });
 
     bool ok = true;
     std::for_each(compressed_saves.begin() + conf.max_backed_up_saves,
-                  compressed_saves.end(), [&ok](const Save &save) {
-                      SPDLOG_INFO("Removing file '{}'",
-                                  save.get_save_path().string());
-                      if (!fs::remove(save.get_save_path())) {
+                  compressed_saves.end(), [&ok](const fs::path &save) {
+                      SPDLOG_INFO("Removing file '{}'", save.string());
+                      if (!fs::remove(save)) {
                           SPDLOG_ERROR("Failed to remove file '{}'",
-                                       save.get_save_path().string());
+                                       save.string());
                           ok = false;
                       }
                   });
@@ -138,11 +140,12 @@ bool cleanup_saves_archive(const std::string &character_id) {
 }
 
 std::vector<Save> list_character_saves(const std::string &character_id) {
-    auto files = tools::list_files_from_directory(conf.saves_path);
+    auto files =
+        tools::list_files_from_directory(conf.saves_path, {"Save", ".ess"});
     std::vector<Save> saves;
 
     for (const auto &file : files) {
-        auto save = Save::from_save_path(file.string());
+        auto save = Save::from_save_path(file);
 
         if (!save.has_value()) {
             continue;

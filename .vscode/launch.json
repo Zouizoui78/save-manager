@@ -5,6 +5,7 @@
             "name": "C++ Debugger",
             "type": "cppvsdbg",
             "request": "attach",
+            "requireExactSource": true
         }
     ]
 }

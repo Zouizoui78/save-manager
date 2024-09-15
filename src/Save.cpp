@@ -18,7 +18,7 @@ Save::from_save_path(const std::filesystem::path &save_path) {
         return std::nullopt;
     }
 
-    if (!path_str.ends_with(".ess") && !path_str.ends_with(".zip")) {
+    if (!path_str.ends_with(".ess")) {
         return std::nullopt;
     }
 

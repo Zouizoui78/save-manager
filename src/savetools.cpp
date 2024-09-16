@@ -1,7 +1,6 @@
 #include "savetools.hpp"
 #include "Conf.hpp"
 #include "tools.hpp"
-#include "ziptools.hpp"
 
 namespace savetools {
 
@@ -85,7 +84,7 @@ bool compress_saves(const std::vector<Save> &saves) {
             files.emplace_back(skse_cosave_path);
         }
 
-        if (!ziptools::zip_files(files, archive_path)) {
+        if (!tools::zip_files(files, archive_path)) {
             ok = false;
         }
     }
@@ -104,12 +103,17 @@ void remove_saves(const std::vector<Save> &saves) {
 }
 
 bool cleanup_saves_archive(const std::string &character_id) {
-    auto compressed_saves_files = tools::list_files_from_directory(
-        fs::path(conf.backup_path) / character_id, {"Save", ".zip"});
+    auto compressed_saves_files =
+        tools::list_files(fs::path(conf.backup_path) / character_id);
 
     std::vector<fs::path> compressed_saves;
     for (const auto &file : compressed_saves_files) {
-        if (Save::parse_character_id(file.string()).empty()) {
+        auto filename(file.filename().string());
+        if (!filename.starts_with("Save") || !filename.ends_with(".zip")) {
+            continue;
+        }
+
+        if (Save::parse_character_id(filename).empty()) {
             continue;
         }
 
@@ -140,18 +144,13 @@ bool cleanup_saves_archive(const std::string &character_id) {
 }
 
 std::vector<Save> list_character_saves(const std::string &character_id) {
-    auto files =
-        tools::list_files_from_directory(conf.saves_path, {"Save", ".ess"});
+    auto files = tools::list_files(conf.saves_path);
     std::vector<Save> saves;
 
     for (const auto &file : files) {
         auto save = Save::from_save_path(file);
 
-        if (!save.has_value()) {
-            continue;
-        }
-
-        if (save->get_character_id() != character_id) {
+        if (!save.has_value() || save->get_character_id() != character_id) {
             continue;
         }
 

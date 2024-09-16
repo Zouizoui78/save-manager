@@ -19,8 +19,6 @@ set(
     src/Save.cpp
     src/savetools.cpp
     src/tools.cpp
-    src/wintools.cpp
-    src/ziptools.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED ${SRC})

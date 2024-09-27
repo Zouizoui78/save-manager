@@ -4,6 +4,14 @@ option(SKYRIM_AE "Build for Skyrim AE" OFF)
 
 project(save-manager VERSION 0.0.1 LANGUAGES CXX)
 
+include(FetchContent)
+FetchContent_Declare(
+  tools
+  GIT_REPOSITORY https://github.com/Zouizoui78/tools
+  GIT_TAG 0c9cff10f046e478055caa5fa20f9c72dfd0abd8
+)
+FetchContent_MakeAvailable(tools)
+
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/include/version.h
@@ -24,6 +32,8 @@ set(
 add_library(${PROJECT_NAME} SHARED ${SRC})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h)
+
+target_link_libraries(save-manager PRIVATE tools)
 
 if(SKYRIM_AE)
     add_compile_definitions(SKYRIM_SUPPORT_AE)

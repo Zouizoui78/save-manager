@@ -25,11 +25,13 @@ for save in saves:
     filename = save.name
     if not filename.startswith("Save"):
         continue
-    index = int(filename[4:6])
+
+    underscore_pos = filename.find("_")
+    index = int(filename[4:underscore_pos])
     if index > latest_save_index:
         latest_save_index = index
         if filename.endswith("ess"):
-            latest_save_name_rest = save.stem[6:]
+            latest_save_name_rest = save.stem[underscore_pos:]
             latest_save_path = save
             latest_skse_path = save.with_suffix(".skse")
 

@@ -2,6 +2,8 @@
 #include "Conf.hpp"
 #include "tools.hpp"
 
+#include "tools/utils/thread_pool.hpp"
+
 namespace savetools {
 
 namespace fs = std::filesystem;
@@ -68,9 +70,12 @@ void manage_saves(const std::string &new_save_name) {
 }
 
 bool compress_saves(const std::vector<Save> &saves) {
-    bool ok = true;
+    std::atomic<bool> ok = true;
 
     fs::create_directories(saves[0].get_backup_path().parent_path().string());
+
+    auto n_threads = std::thread::hardware_concurrency() / 2;
+    tools::ThreadPool pool(n_threads < 1 ? 1 : n_threads);
 
     for (const auto &save : saves) {
         std::string archive_path(save.get_backup_path().string());
@@ -84,10 +89,14 @@ bool compress_saves(const std::vector<Save> &saves) {
             files.emplace_back(skse_cosave_path);
         }
 
-        if (!tools::zip_files(files, archive_path)) {
-            ok = false;
-        }
+        pool.enqueue([&ok, files, archive_path] {
+            if (!tools::zip_files(files, archive_path)) {
+                ok = false;
+            }
+        });
     }
+
+    pool.wait();
     return ok;
 }
 

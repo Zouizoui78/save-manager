@@ -2,6 +2,7 @@
 #include "Conf.hpp"
 #include "tools.hpp"
 
+#include "tools/utils/stopwatch.hpp"
 #include "tools/utils/thread_pool.hpp"
 
 namespace savetools {
@@ -24,6 +25,7 @@ void manage_saves(const std::string &new_save_name) {
     }
 
     std::thread([new_save_name]() {
+        tools::utils::Stopwatch sw;
         std::lock_guard lock(mutex);
 
         std::string character_id = Save::parse_character_id(new_save_name);
@@ -61,10 +63,13 @@ void manage_saves(const std::string &new_save_name) {
 
         remove_saves(to_remove);
 
-        std::string notif = std::format("Removed {} save", to_remove_size);
-        if (to_remove_size > 1) {
-            notif.append("s");
-        }
+        auto duration_s =
+            sw.get_duration<
+                  std::chrono::duration<double, std::chrono::seconds::period>>()
+                .count();
+        std::string notif =
+            std::format("Removed {} save{} in {:.3f}s", to_remove_size,
+                        to_remove_size > 1 ? "s" : "", duration_s);
         RE::DebugNotification(notif.c_str());
     }).detach();
 }

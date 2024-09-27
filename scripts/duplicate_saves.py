@@ -4,15 +4,17 @@ from pathlib import Path
 import shutil
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("path", help="Path to the saves to duplicate")
-argparser.add_argument("-n", "--number", help="Number of saves to create", default=100)
+argparser.add_argument("path", help="Path to the saves to duplicate", type=Path)
+argparser.add_argument(
+    "-n", "--number", help="Number of saves to create", default=100, type=int
+)
 
 args = argparser.parse_args()
 
 saves = list[Path]()
 
 for f in os.listdir(args.path):
-    filepath = Path(os.path.join(args.path, f))
+    filepath = Path(args.path / f)
     if filepath.is_file() and filepath.suffix in [".ess", ".skse"]:
         saves.append(filepath)
 

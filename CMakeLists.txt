@@ -8,7 +8,7 @@ include(FetchContent)
 FetchContent_Declare(
   tools
   GIT_REPOSITORY https://github.com/Zouizoui78/tools
-  GIT_TAG 84983adac2288ee9436613a6dd9ef3c373e07926
+  GIT_TAG 89d89baf750a5868160fcb5c26542dcefeae90e1
 )
 FetchContent_MakeAvailable(tools)
 

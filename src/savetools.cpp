@@ -63,10 +63,7 @@ void manage_saves(const std::string &new_save_name) {
 
         remove_saves(to_remove);
 
-        auto duration_s =
-            sw.get_duration<
-                  std::chrono::duration<double, std::chrono::seconds::period>>()
-                .count();
+        auto duration_s = sw.get_duration<std::chrono::seconds>();
         std::string notif =
             std::format("Removed {} save{} in {:.3f}s", to_remove_size,
                         to_remove_size > 1 ? "s" : "", duration_s);
